@@ -1,0 +1,247 @@
+{
+  "info": {
+    "_postman_id": "cdf69100-365d-4145-b35f-0f5bdd0d2895",
+    "name": "bonite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "624951",
+    "_collection_link": "https://go.postman.co/collection/624951-cdf69100-365d-4145-b35f-0f5bdd0d2895?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Login-paso1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Extraer el woocommerce-login-nonce del HTML\r",
+              "var html = pm.response.text();\r",
+              "var match = html.match(/name=\"woocommerce-login-nonce\"\\s+value=\"([^\"]+)\"/);\r",
+              "\r",
+              "if (match) {\r",
+              "    pm.collectionVariables.set(\"login_nonce\", match[1]);\r",
+              "    console.log(\"✅ login_nonce guardado: \" + match[1]);\r",
+              "} else {\r",
+              "    console.log(\"❌ No se encontró el woocommerce-login-nonce\");\r",
+              "}\r",
+              "\r",
+              "pm.test(\"Nonce extraído correctamente\", function () {\r",
+              "    pm.expect(pm.collectionVariables.get(\"login_nonce\")).to.not.be.undefined;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://www.bon-bonite.com/mi-cuenta/",
+          "protocol": "https",
+          "host": [
+            "www",
+            "bon-bonite",
+            "com"
+          ],
+          "path": [
+            "mi-cuenta",
+            ""
+          ]
+        },
+        "description": "buscar esto <input type=\"hidden\" name=\"woocommerce-login-nonce\" value=\""
+      },
+      "response": []
+    },
+    {
+      "name": "Login-paso2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var html = pm.response.text();\r",
+              "var match = html.match(/action=logout[^\"]*_wpnonce=([a-f0-9]+)/);\r",
+              "\r",
+              "if (match) {\r",
+              "    pm.collectionVariables.set(\"logout_nonce\", match[1]);\r",
+              "    console.log(\"✅ logout_nonce guardado: \" + match[1]);\r",
+              "} else {\r",
+              "    console.log(\"❌ No se encontró el _wpnonce de logout (¿login falló?)\");\r",
+              "}\r",
+              "\r",
+              "pm.test(\"Login exitoso - nonce de logout encontrado\", function () {\r",
+              "    pm.expect(match).to.not.be.null;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "woocommerce-login-nonce",
+              "value": "{{login_nonce}}",
+              "type": "text",
+              "uuid": "42d4b2d2-4bc9-488c-8044-3d4d3be832fe"
+            },
+            {
+              "key": "username",
+              "value": "1112478277",
+              "type": "text",
+              "uuid": "88beefc1-77e4-40bd-a6ca-649fb083385b"
+            },
+            {
+              "key": "password",
+              "value": "Vasquez123",
+              "type": "text",
+              "uuid": "b25d186b-d223-4b5e-9dd6-cf8c3f536790"
+            },
+            {
+              "key": "_wp_http_referer",
+              "value": "/mi-cuenta/",
+              "type": "text",
+              "uuid": "39e3eb3a-1fee-4887-9998-ab4a93882cc5"
+            },
+            {
+              "key": "login",
+              "value": "Iniciar+sesión",
+              "type": "text",
+              "uuid": "c012599f-9f87-4694-81b9-3b460ae292ed"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://www.bon-bonite.com/mi-cuenta/",
+          "protocol": "https",
+          "host": [
+            "www",
+            "bon-bonite",
+            "com"
+          ],
+          "path": [
+            "mi-cuenta",
+            ""
+          ]
+        },
+        "description": "con el valor de"
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Logout exitoso\", function () {\r",
+              "    // Si redirige a la home o devuelve 200, el logout fue exitoso\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 302]);\r",
+              "    console.log(\"✅ Logout completado\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://www.bon-bonite.com/wp-login.php?action=logout&redirect_to=https://www.bon-bonite.com&_wpnonce={{logout_nonce}}",
+          "protocol": "https",
+          "host": [
+            "www",
+            "bon-bonite",
+            "com"
+          ],
+          "path": [
+            "wp-login.php"
+          ],
+          "query": [
+            {
+              "key": "action",
+              "value": "logout"
+            },
+            {
+              "key": "redirect_to",
+              "value": "https://www.bon-bonite.com"
+            },
+            {
+              "key": "_wpnonce",
+              "value": "{{logout_nonce}}"
+            }
+          ]
+        },
+        "description": "debe coger el valor de action=logout y ponerlo en el campo _wpnonce"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "login_nonce",
+      "value": ""
+    },
+    {
+      "key": "logout_nonce",
+      "value": ""
+    }
+  ]
+}
