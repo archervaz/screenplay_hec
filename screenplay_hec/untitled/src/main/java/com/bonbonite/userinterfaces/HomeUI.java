@@ -11,8 +11,6 @@ public class HomeUI {
     public static final Target BTN_LUPA = Target.the("lupa de búsqueda")
             .locatedBy("#search-btn svg");
 
-
-
     public static final Target BTN_MI_CUENTA = Target.the("botón mi cuenta")
             .located(By.cssSelector("#toggle-account-menu a"));
 
