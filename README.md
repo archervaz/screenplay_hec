@@ -6,7 +6,7 @@
 |  2  | Gradle            |                |
 |  3  | Navegador         |  Google Chrome |
 |  4  | Sistema Operativo | Windows 11 Pro |
-|  5  | Rama principal    |         master |
+|  5  | Rama principal    |           main |
 
 ## Pre requisitos para ejecutar 📋
 
